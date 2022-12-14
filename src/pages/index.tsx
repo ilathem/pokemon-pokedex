@@ -34,11 +34,11 @@ const Home: NextPage<Props> = ({pokeNames}) => {
   const liVariant = {
     hidden: {
       opacity: 0,
-      y: '100%',
+      x: '-100%',
     },
     visible: {
       opacity: 1,
-      y: 0,
+      x: 0,
     }
   }
 
@@ -60,6 +60,7 @@ const Home: NextPage<Props> = ({pokeNames}) => {
               animate="visible"
               exit="hidden"
               variants={ulVariant}
+              layout
             >
               <motion.li 
                 variants={liVariant}
