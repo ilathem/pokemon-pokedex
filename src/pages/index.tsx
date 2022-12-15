@@ -1,45 +1,62 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { trpc } from "../utils/trpc";
+import { scheduleMicrotask } from "@tanstack/query-core/build/lib/utils";
 
 interface Props {
-  pokeNames: PokeNames
+  pokeNames: Array<PokeNames>;
 }
 
 interface PokeNames {
-  name: string,
-  url: string,
+  name: string;
+  url: string;
 }
 
-const Home: NextPage<Props> = ({pokeNames}) => {
+const Home: NextPage<Props> = ({ pokeNames }) => {
+  const [searchString, setSearchString] = useState<string>("");
+  const [autoFill, setAutoFill] = useState<Array<string>>([]);
 
-  const [ search, setSearch ] = useState('')
+  useEffect(() => {
+    console.log(pokeNames);
+  }, [pokeNames]);
+
+  console.log(autoFill);
 
   const ulVariant = {
     hidden: {
-      transition: {
-        staggerChildren: .1,
-        staggerDirection: 0,
-      }
+      // transition: {
+      //   staggerChildren: .05,
+      //   staggerDirection: 0,
+      // }
     },
     visible: {
-      transition: {
-        staggerChildren: .1,
-      }
-    }
-  }
+      // transition: {
+      //   staggerChildren: .05,
+      // }
+    },
+  };
 
-  const liVariant = {
-    hidden: {
-      opacity: 0,
-      x: '-100%',
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
+  const autoComplete = (searchTerm: string) => {
+    const tempArray: Array<string> = [];
+    for (const poke of pokeNames) {
+      if (
+        poke.name.substring(0, searchTerm.length).toUpperCase() ===
+        searchTerm.toUpperCase()
+      ) {
+        console.log(poke.name);
+        tempArray.push(
+          `${poke.name.charAt(0).toUpperCase()}${poke.name.slice(1)}`
+        );
+      }
     }
+    setAutoFill(tempArray);
+  };
+
+  const selectPokemon = (pokemonName: string) => {
+    setSearchString(pokemonName)
+    setAutoFill([])
   }
 
   return (
@@ -49,29 +66,51 @@ const Home: NextPage<Props> = ({pokeNames}) => {
         <meta name="description" content="A simple pokedex app build" />
         <link rel="icon" href="/pokeball.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col justify-start items-center bg-gray-800 font-Montserrat">
-        <div className="flex flex-col items-center transition relative xs:m-1">
-          <input type="text" className="rounded-2xl max-w-sm w-full opacity-75 focus:opacity-90 transition outline-none p-2 mt-10 text-4xl capitalize peer duration-700" value={search} onChange={e => setSearch(e.target.value)} required/>
-          <span className="absolute translate-y-12 xs:-translate-x-6 xs:text-4xl text-3xl pointer-events-none transition xs:peer-focus:translate-y-2 xs:peer-valid:-translate-x-28 peer-valid:translate-y-2 peer-valid:scale-50 peer-valid:text-white/80 peer-focus:translate-y-1 xs:peer-focus:-translate-x-28 peer-focus:scale-50 peer-focus:text-white/80 duration-300">Pokemon Name</span>
+      <main className="flex min-h-screen flex-col items-center justify-start bg-gray-800 font-Montserrat overflow-hidden">
+        <div className="relative flex flex-col items-center transition xs:m-1">
+          <input
+            spellCheck={false}
+            type="text"
+            className="peer mt-10 w-full max-w-sm rounded-2xl p-2 text-4xl capitalize opacity-75 outline-none transition duration-700 focus:opacity-90"
+            value={searchString}
+            onChange={(e) => {
+              setSearchString(e.target.value);
+              autoComplete(e.target.value);
+            }}
+            required
+          />
+          <span className="pointer-events-none absolute translate-y-12 text-3xl transition duration-300 peer-valid:translate-y-2 peer-valid:scale-50 peer-valid:text-white/80 peer-focus:translate-y-1 peer-focus:scale-50 peer-focus:text-white/80 xs:-translate-x-6 xs:text-4xl xs:peer-valid:-translate-x-28 xs:peer-focus:translate-y-2 xs:peer-focus:-translate-x-28">
+            Pokemon Name
+          </span>
           <AnimatePresence>
-            {search && 
-            <motion.ul className="text-white/80 text-xl mt-2"
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              variants={ulVariant}
-              layout
-            >
-              <motion.li 
-                variants={liVariant}
-              >one</motion.li>
-              <motion.li 
-                variants={liVariant}
-              >two</motion.li>
-              <motion.li 
-                variants={liVariant}
-              >three</motion.li>
-            </motion.ul>}
+            {searchString && (
+              <motion.ul
+                className="
+                mt-2 
+                flex 
+                h-[calc(100vh-8rem)]
+                w-full 
+                flex-col 
+                overflow-y-auto 
+                overflow-x-hidden
+                border-0 
+                border-red-600 
+                text-xl
+                text-white/80
+              "
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={ulVariant}
+                layout
+              >
+                <AnimatePresence>
+                  {autoFill.map((pokeName) => (
+                    <PokemonName key={pokeName} pokemonName={pokeName} selectPokemon={selectPokemon}/>
+                  ))}
+                </AnimatePresence>
+              </motion.ul>
+            )}
           </AnimatePresence>
         </div>
       </main>
@@ -79,14 +118,47 @@ const Home: NextPage<Props> = ({pokeNames}) => {
   );
 };
 
-// export async function getStaticProps() {
-//   const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0');
-//   const data = await res.json();
-//   return {
-//     props: {
-//       pokeNames: data.results
-//     }
-//   }
-// }
+const PokemonName = (
+  { pokemonName, selectPokemon }: 
+  { pokemonName: string, selectPokemon: (pokemonName: string) => void }
+) => {
+  const liVariant = {
+    hidden: {
+      opacity: 0,
+      transition: {
+        duration: 0.1,
+      },
+    },
+    visible: {
+      opacity: 1,
+    },
+  };
+  
+  return (
+    <motion.li
+      variants={liVariant}
+      layout
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      className="cursor-pointer p-[.1rem] transition-colors hover:text-red-600"
+      onClick={() => selectPokemon(pokemonName)}
+    >
+      {pokemonName}
+    </motion.li>
+  );
+};
+
+export async function getStaticProps() {
+  const res = await fetch(
+    "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+  );
+  const data = await res.json();
+  return {
+    props: {
+      pokeNames: data.results,
+    },
+  };
+}
 
 export default Home;

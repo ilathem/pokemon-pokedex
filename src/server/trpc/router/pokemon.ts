@@ -2,20 +2,6 @@ import { z } from "zod";
 
 import { router, publicProcedure } from "../trpc";
 
-// interface Ability {
-//   ability: {
-//     name: string,
-//     url: string,
-//   },
-//   is_hidden: boolean,
-//   slot: number,
-// }
-
-// interface Form {
-//   name: string,
-//   url: string,
-// }
-
 interface NameAndUrl {
   name: string,
   url: string,
