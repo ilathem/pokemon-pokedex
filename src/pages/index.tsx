@@ -66,7 +66,7 @@ const Home: NextPage<Props> = ({ pokeNames }) => {
         <meta name="description" content="A simple pokedex app build" />
         <link rel="icon" href="/pokeball.ico" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-start bg-gray-800 font-Montserrat overflow-hidden">
+      <main className="flex min-h-screen flex-col items-center justify-start bg-gray-800 font-Montserrat overflow-hidden overscroll-none">
         <div className="relative flex flex-col items-center transition xs:m-1">
           <input
             spellCheck={false}
