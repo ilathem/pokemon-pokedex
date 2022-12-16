@@ -15,6 +15,8 @@ interface Props {
   pokeNames: Array<PokeNames>;
 }
 
+// TODO : get rid of weird scrolling behavior on phone
+
 const Home: NextPage<Props> = ({ pokeNames }) => {
   const [ selectedPokemon, setSelectedPokemon ] = useState<string>('');
 
