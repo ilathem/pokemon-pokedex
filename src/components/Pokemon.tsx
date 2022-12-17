@@ -135,10 +135,10 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
           return (
             <li key={name} className="border-0 border-black flex flex-col items-center text-center relative">
               <PokeType name={name} />
-              <table className="text-sm border-spacing-2 border-separate border border-red-700">
+              <table className="text-sm border-spacing-2 border-separate border border-red-700/50">
                 <tr>
-                  <td>Double Damage Dealt:</td>
-                  <td>
+                  <td className="border border-red-700/50">Double Damage Dealt:</td>
+                  <td className="border border-red-700/50">
                     {typeData.filter(type => type.name === name)[0]?.double_damage_to.map((typeName, index, arr) => {
                       if (index !== arr.length - 1) {
                         return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
@@ -149,8 +149,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td>Half Damage Dealt:</td>
-                    <td>
+                  <td className="border border-red-700/50">Half Damage Dealt:</td>
+                    <td className="border border-red-700/50">
                       {typeData.filter(type => type.name === name)[0]?.half_damage_to.map((typeName, index, arr) => {
                         if (index !== arr.length - 1) {
                           return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
@@ -161,8 +161,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td>No Damage Dealt:</td>
-                    <td>
+                  <td className="border border-red-700/50">No Damage Dealt:</td>
+                    <td className="border border-red-700/50">
                       {typeData.filter(type => type.name === name)[0]?.no_damage_to.map((typeName, index, arr) => {
                         if (index !== arr.length - 1) {
                           return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
@@ -173,8 +173,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td>Double Damage Taken:</td>
-                    <td>
+                  <td className="border border-red-700/50">Double Damage Taken:</td>
+                    <td className="border border-red-700/50">
                       {typeData.filter(type => type.name === name)[0]?.double_damage_from.map((typeName, index, arr) => {
                         if (index !== arr.length - 1) {
                           return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
@@ -185,8 +185,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td>Half Damage Taken:</td>
-                    <td>
+                  <td className="border border-red-700/50">Half Damage Taken:</td>
+                    <td className="border border-red-700/50">
                       {typeData.filter(type => type.name === name)[0]?.half_damage_from.map((typeName, index, arr) => {
                         if (index !== arr.length - 1) {
                           return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
@@ -197,8 +197,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td>No Damage Taken:</td>
-                    <td>
+                  <td className="border border-red-700/50">No Damage Taken:</td>
+                    <td className="border border-red-700/50">
                       {typeData.filter(type => type.name === name)[0]?.no_damage_from.map((typeName, index, arr) => {
                         if (index !== arr.length - 1) {
                           return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
