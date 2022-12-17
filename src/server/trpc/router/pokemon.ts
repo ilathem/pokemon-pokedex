@@ -4,8 +4,8 @@ import { request, gql } from 'graphql-request';
 
 import {
   type Pokemon,
-  type EvolutionChain,
-  type EvolutionGraphQLResponse,
+  type GraphQLResponse,
+  type Types,
 } from '../../../utils/types'
 
 export const pokemonRouter = router({
@@ -13,58 +13,41 @@ export const pokemonRouter = router({
     .input(z.object({ name: z.string() }))
     .query(async ({ input }) => {
       const pokemonData:Pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${input?.name}`).then(res => res.json());
-      const id:number = pokemonData.id
-      // there is no way to get evolution id's from the pokemon fetch call,
-      // need to use graphql to query the db to get the right resources
-      // (maybe use graphql for everything?)
-      // const evolutionChain:EvolutionChain = await fetch(`https://pokeapi.co/api/v2/evolution-chain/${id}/`).then(res => res.json());
-
+      
       const query = gql`
         query samplePokeAPIquery {
           pokemon_v2_evolutionchain(where: {pokemon_v2_pokemonspecies: {name: {_eq: "eevee"}}}) {
             id
-            pokemon_v2_pokemonspecies {
+            pokemon_v2_pokemonspecies(order_by: {evolves_from_species_id: asc_nulls_first}) {
               id
               name
               evolves_from_species_id
             }
           }
-          pokemon_v2_pokemon(where: {name: {_eq: "eevee"}}) {
-            name
-            height
-            weight
-            base_experience
-            pokemon_v2_pokemonsprites {
-              sprites
-            }
-            pokemon_v2_pokemonstats {
-              pokemon_v2_stat {
-                name
-              }
-              base_stat
-            }
-            pokemon_v2_pokemontypes {
-              pokemon_v2_type {
-                name
-              }
-            }
-            id
-          }
-          pokemon_v2_typeefficacy(distinct_on: target_type_id) {
-            pokemonV2TypeByTargetTypeId {
-              name
-            }
-            damage_factor
-          }
         }
       `
 
-      request('https://beta.pokeapi.co/graphql/v1beta', query).then(data => console.log(data))
+      const types:Array<Types> = [];
+      for (let i = 0; i < pokemonData.types.length; i++) {
+        const type:Types = await fetch(`https://pokeapi.co/api/v2/type/${pokemonData.types[i]?.type.name}/`)
+          .then(res => res.json());
+        // console.log(type.damage_relations);
+        types.push(type);
+      }
 
-      console.log("running backend")
+      // console.log(types);
+      
+
+
+      // const evolutionData:GraphQLResponse = await request('https://beta.pokeapi.co/graphql/v1beta', query).then(data => {return data.pokemon_v2_evolutionchain[0]})
+      
+
+      
+
 
       return {
         pokemonData,
+        types,
         // evolutionChain,
       }
     }),

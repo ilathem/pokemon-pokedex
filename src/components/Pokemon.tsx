@@ -4,7 +4,7 @@ import {
   useState
 } from "react";
 import { trpc } from "../utils/trpc";
-import { type Pokemon, type ChainLink } from '../utils/types'
+import { type Pokemon, type ChainLink, NameAndUrl } from '../utils/types'
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -14,7 +14,80 @@ interface Props {
 
 const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   const pokemon = trpc.pokemon.getOnePokemon.useQuery({ name: pokemonName.toLowerCase() })
-  const [ evolutions, setEvolutions ] = useState<Array<string>>([''])
+
+  // const [ evolutions, setEvolutions ] = useState<Array<string>>([''])
+  interface typeObject {
+    name?: string,
+    double_damage_to: Array<string>,
+    half_damage_from: Array<string>,
+    no_damage_from: Array<string>,
+    double_damage_from: Array<string>,
+    half_damage_to: Array<string>,
+    no_damage_to: Array<string>,
+  }
+
+  const [ typeData, setTypeData ] = useState<Array<typeObject>>([])
+
+
+
+  useEffect(() => {
+    
+    console.log("getting types");
+    if (!pokemon.data) return;
+    if (!pokemon.data.types) return;
+    const typeDataArray:Array<typeObject> = []
+    for (let i = 0; i < pokemon.data.types.length; i++) {
+      const typeObject:typeObject = {
+        name: pokemon.data.types[i]?.name,
+        double_damage_from: [],
+        double_damage_to: [],
+        half_damage_from: [],
+        half_damage_to: [],
+        no_damage_from: [],
+        no_damage_to: [],
+      }
+      // console.log(pokemon.data.types[i]?.damage_relations.double_damage_to)
+      if (pokemon.data.types[i]?.damage_relations.double_damage_to.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_to) {
+          typeObject.double_damage_to.push(types.name);
+        }
+      }
+      if (pokemon.data.types[i]?.damage_relations.half_damage_from.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_from) {
+          typeObject.half_damage_from.push(types.name);
+        }
+      }
+      if (pokemon.data.types[i]?.damage_relations.no_damage_from.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_from) {
+          typeObject.no_damage_from.push(types.name);
+        }
+      }
+      if (pokemon.data.types[i]?.damage_relations.double_damage_from.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_from) {
+          typeObject.double_damage_from.push(types.name);
+        }
+      }
+      if (pokemon.data.types[i]?.damage_relations.half_damage_to.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_to) {
+          typeObject.half_damage_to.push(types.name);
+        }
+      }
+      if (pokemon.data.types[i]?.damage_relations.no_damage_to.length !== 0) {
+        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_to) {
+          typeObject.no_damage_to.push(types.name);
+        }
+      }
+      // console.log(typeObject)
+      typeDataArray.push(typeObject);
+    }
+    setTypeData(typeDataArray)
+  }, [pokemon.isFetched])
+
+  useEffect(() =>{
+    console.log(typeData)
+  }, [typeData])
+
+
 
   // TODO: evolutions and graphql
   // TODO: stats and https://react-chartjs-2.js.org/
@@ -45,44 +118,97 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   }
 
   if (pokemon.data) return (
-    <motion.div className="absolute top-32 w-2/3 max-w-sm h-1/2 flex flex-col justify-start items-center px-2">
+    <motion.div className="absolute top-32 w-full flex flex-col justify-start items-center px-2">
+      <div className="overflow-y-auto overflow-x-hidden max-h-[calc(100vh-10rem)] w-full flex flex-col items-center">
       <Image
         key="pokeImage"
-        className="h-auto w-full"
+        className="h-auto w-2/3 max-w-sm"
         loader={() => pokemon.data.pokemonData.sprites.other.dream_world.front_default}
         src="/pokeball.ico"
         alt="Pokemon sprite"
         width="500"
         height="500"
       />
-      <ul key="types" className="flex flex-row items-center">
+      <ul key="types" className="flex flex-col items-center justify-around w-full text-white/80">
         {pokemon.data.pokemonData.types.map(type => {
           const name: string = type.type.name
           return (
-            <li 
-              key={name}
-              className={
-                name === "normal" ? "bg-normal shadow-lg shadow-normal/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "fire" ? "bg-fire shadow-lg shadow-fire/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "water" ? "bg-water shadow-lg shadow-water/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "electric" ? "bg-electric shadow-lg shadow-electric/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "grass" ? "bg-grass shadow-lg shadow-grass/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "ice" ? "bg-ice shadow-lg shadow-ice/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "fighting" ? "bg-fighting shadow-lg shadow-fighting/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "poison" ? "bg-poison shadow-lg shadow-poison/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "ground" ? "bg-ground shadow-lg shadow-ground/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "flying" ? "bg-flying shadow-lg shadow-flying/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "psychic" ? "bg-psychic shadow-lg shadow-psychic/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "bug" ? "bg-bug shadow-lg shadow-bug/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "rock" ? "bg-rock shadow-lg shadow-rock/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "ghost" ? "bg-ghost shadow-lg shadow-ghost/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "dragon" ? "bg-dragon shadow-lg shadow-dragon/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "dark" ? "bg-dark  shadow-lg shadow-dark/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "steel" ? "bg-steel shadow-lg shadow-steel/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" :
-                name === "fairy" ? "bg-fairy shadow-lg shadow-fairy/50 rounded-xl m-1 text-center py-1 px-2 text-white/80" : ""
-              }
-            >
-              {name}
+            <li key={name} className="border-0 border-black flex flex-col items-center text-center relative">
+              <PokeType name={name} />
+              <table className="text-sm border-spacing-2 border-separate border border-red-700">
+                <tr>
+                  <td>Double Damage Dealt:</td>
+                  <td>
+                    {typeData.filter(type => type.name === name)[0]?.double_damage_to.map((typeName, index, arr) => {
+                      if (index !== arr.length - 1) {
+                        return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                      } else {
+                        return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                      }
+                    })}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Half Damage Dealt:</td>
+                    <td>
+                      {typeData.filter(type => type.name === name)[0]?.half_damage_to.map((typeName, index, arr) => {
+                        if (index !== arr.length - 1) {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                        } else {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                        }
+                      })}
+                  </td>
+                </tr>
+                <tr>
+                  <td>No Damage Dealt:</td>
+                    <td>
+                      {typeData.filter(type => type.name === name)[0]?.no_damage_to.map((typeName, index, arr) => {
+                        if (index !== arr.length - 1) {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                        } else {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                        }
+                      })}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Double Damage Taken:</td>
+                    <td>
+                      {typeData.filter(type => type.name === name)[0]?.double_damage_from.map((typeName, index, arr) => {
+                        if (index !== arr.length - 1) {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                        } else {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                        }
+                      })}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Half Damage Taken:</td>
+                    <td>
+                      {typeData.filter(type => type.name === name)[0]?.half_damage_from.map((typeName, index, arr) => {
+                        if (index !== arr.length - 1) {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                        } else {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                        }
+                      })}
+                  </td>
+                </tr>
+                <tr>
+                  <td>No Damage Taken:</td>
+                    <td>
+                      {typeData.filter(type => type.name === name)[0]?.no_damage_from.map((typeName, index, arr) => {
+                        if (index !== arr.length - 1) {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1) + ", "
+                        } else {
+                          return typeName.charAt(0).toUpperCase() + typeName.substring(1)
+                        }
+                      })}
+                  </td>
+                </tr>
+              </table>
             </li>
           )
         })}
@@ -91,15 +217,40 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         <p className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></p>
         <p className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></p>
       </motion.div>
-      {/* <p className="text-2xl text-white/80">Base Stats</p> */}
-
-      {/* <ul key="evolution">
-        {pokemon.data.evolutionChain.chain.species.name}
-      </ul> */}
+      </div>
     </motion.div>
   )
   return (
     <h1>No pokemon found...?</h1>
+  )
+}
+
+const PokeType = ({name, modifier}: {name: string, modifier?: string}) => {
+  return (
+    <p
+      className={
+        name === "normal" ? "bg-normal shadow-lg shadow-normal/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "fire" ? "bg-fire shadow-lg shadow-fire/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "water" ? "bg-water shadow-lg shadow-water/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "electric" ? "bg-electric shadow-lg shadow-electric/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "grass" ? "bg-grass shadow-lg shadow-grass/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "ice" ? "bg-ice shadow-lg shadow-ice/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "fighting" ? "bg-fighting shadow-lg shadow-fighting/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "poison" ? "bg-poison shadow-lg shadow-poison/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "ground" ? "bg-ground shadow-lg shadow-ground/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "flying" ? "bg-flying shadow-lg shadow-flying/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "psychic" ? "bg-psychic shadow-lg shadow-psychic/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "bug" ? "bg-bug shadow-lg shadow-bug/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "rock" ? "bg-rock shadow-lg shadow-rock/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "ghost" ? "bg-ghost shadow-lg shadow-ghost/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "dragon" ? "bg-dragon shadow-lg shadow-dragon/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "dark" ? "bg-dark  shadow-lg shadow-dark/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "steel" ? "bg-steel shadow-lg shadow-steel/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
+        name === "fairy" ? "bg-fairy shadow-lg shadow-fairy/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" : ""
+      }
+    >
+      {name}
+    </p>
   )
 }
 

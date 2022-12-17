@@ -1,3 +1,6 @@
+import { NextMiddleware } from "next/server";
+import { nullable } from "zod";
+
 export interface PokeNames {
   name: string;
   url: string;
@@ -120,11 +123,55 @@ export interface EvolutionChain {
   chain: ChainLink
 }
 
-export interface EvolutionGraphQLResponse {
-  pokemon_v2_evolutionchain: {
+export interface GraphQLResponse {
+  pokemon_v2_evolutionchain: Array<{
     id: number,
     pokemon_v2_pokemonspecies: Array<{
       id: number,
+      name: string,
+      evolves_from_species_id: number|null,
     }>
-  }
+  }>,
+}
+
+export interface TypeRelations {
+  no_damage_to: Array<NameAndUrl>,
+  half_damage_to: Array<NameAndUrl>,
+  double_damage_to: Array<NameAndUrl>,
+  no_damage_from: Array<NameAndUrl>,
+  half_damage_from: Array<NameAndUrl>,
+  double_damage_from: Array<NameAndUrl>,
+}
+
+export interface TypeRelationsPast {
+  generation: NameAndUrl,
+  damage_relations: TypeRelations
+}
+
+export interface GenerationGameIndex {
+  game_index: number,
+  generation: NameAndUrl,
+}
+
+export interface Name {
+  name: string,
+  language: NameAndUrl,
+}
+
+export interface TypePokemon {
+  slot: number,
+  pokemon: NameAndUrl
+}
+
+export interface Types {
+  id: number,
+  name: string,
+  damage_relations: TypeRelations,
+  past_damage_relations: Array<TypeRelationsPast>,
+  game_indices: Array<GenerationGameIndex>,
+  generation: NameAndUrl,
+  move_damage_class: NameAndUrl,
+  names: Array<Name>,
+  pokemon: Array<TypePokemon>,
+  moves: Array<NameAndUrl>
 }
