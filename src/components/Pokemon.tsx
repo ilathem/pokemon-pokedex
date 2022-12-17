@@ -4,7 +4,7 @@ import {
   useState
 } from "react";
 import { trpc } from "../utils/trpc";
-import { type Pokemon, type ChainLink, NameAndUrl } from '../utils/types'
+import { type Pokemon } from '../utils/types'
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -33,6 +33,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   useEffect(() => {
     
     console.log("getting types");
+    if (pokemon.data === undefined) return;
     if (!pokemon.data) return;
     if (!pokemon.data.types) return;
     const typeDataArray:Array<typeObject> = []
@@ -48,32 +49,32 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       }
       // console.log(pokemon.data.types[i]?.damage_relations.double_damage_to)
       if (pokemon.data.types[i]?.damage_relations.double_damage_to.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_to) {
+        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_to ?? []) {
           typeObject.double_damage_to.push(types.name);
         }
       }
       if (pokemon.data.types[i]?.damage_relations.half_damage_from.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_from) {
+        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_from ?? []) {
           typeObject.half_damage_from.push(types.name);
         }
       }
       if (pokemon.data.types[i]?.damage_relations.no_damage_from.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_from) {
+        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_from ?? []) {
           typeObject.no_damage_from.push(types.name);
         }
       }
       if (pokemon.data.types[i]?.damage_relations.double_damage_from.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_from) {
+        for (const types of pokemon.data.types[i]?.damage_relations.double_damage_from ?? []) {
           typeObject.double_damage_from.push(types.name);
         }
       }
       if (pokemon.data.types[i]?.damage_relations.half_damage_to.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_to) {
+        for (const types of pokemon.data.types[i]?.damage_relations.half_damage_to ?? []) {
           typeObject.half_damage_to.push(types.name);
         }
       }
       if (pokemon.data.types[i]?.damage_relations.no_damage_to.length !== 0) {
-        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_to) {
+        for (const types of pokemon.data.types[i]?.damage_relations.no_damage_to ?? []) {
           typeObject.no_damage_to.push(types.name);
         }
       }
@@ -81,6 +82,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       typeDataArray.push(typeObject);
     }
     setTypeData(typeDataArray)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon.isFetched])
 
   useEffect(() =>{
@@ -225,7 +227,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   )
 }
 
-const PokeType = ({name, modifier}: {name: string, modifier?: string}) => {
+const PokeType = ({name} : {name: string}) => {
   return (
     <p
       className={

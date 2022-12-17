@@ -1,6 +1,3 @@
-import { NextMiddleware } from "next/server";
-import { nullable } from "zod";
-
 export interface PokeNames {
   name: string;
   url: string;
