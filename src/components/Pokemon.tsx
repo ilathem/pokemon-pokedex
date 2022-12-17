@@ -19,22 +19,22 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   // TODO: evolutions and graphql
   // TODO: stats and https://react-chartjs-2.js.org/
 
-  useEffect(() => {
-    // there is no way to get evolution id's from the pokemon fetch call,
-    // need to use graphql to query the db to get the right resources
-    // (maybe use graphql for everything?)
-    const getEvolutions = () => {
-      console.log("getting evolutions...")
-      const tempEvolutions:Array<string> = []
-      let link:ChainLink | undefined = pokemon.data?.evolutionChain.chain.evolves_to[0];
-      while (link) {
-        tempEvolutions.push(link.species.name);
-        link = link.evolves_to[0];
-      }
-      console.log(tempEvolutions)
-    }
-    getEvolutions()
-  }, [pokemon, evolutions])
+  // useEffect(() => {
+  //   // there is no way to get evolution id's from the pokemon fetch call,
+  //   // need to use graphql to query the db to get the right resources
+  //   // (maybe use graphql for everything?)
+  //   const getEvolutions = () => {
+  //     console.log("getting evolutions...")
+  //     const tempEvolutions:Array<string> = []
+  //     let link:ChainLink | undefined = pokemon.data?.evolutionChain.chain.evolves_to[0];
+  //     while (link) {
+  //       tempEvolutions.push(link.species.name);
+  //       link = link.evolves_to[0];
+  //     }
+  //     console.log(tempEvolutions)
+  //   }
+  //   getEvolutions()
+  // }, [pokemon, evolutions])
 
   if (pokemon.isLoading) {
     return (

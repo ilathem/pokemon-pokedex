@@ -119,3 +119,12 @@ export interface EvolutionChain {
   baby_trigger_item: NameAndUrl,
   chain: ChainLink
 }
+
+export interface EvolutionGraphQLResponse {
+  pokemon_v2_evolutionchain: {
+    id: number,
+    pokemon_v2_pokemonspecies: Array<{
+      id: number,
+    }>
+  }
+}
