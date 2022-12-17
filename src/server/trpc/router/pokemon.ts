@@ -21,14 +21,15 @@ export const pokemonRouter = router({
 
       const query = gql`
         query samplePokeAPIquery {
-          pokemon_v2_evolutionchain(where: {pokemon_v2_pokemonspecies: {name: {_eq: "charizard"}}}) {
+          pokemon_v2_evolutionchain(where: {pokemon_v2_pokemonspecies: {name: {_eq: "eevee"}}}) {
             id
             pokemon_v2_pokemonspecies {
               id
               name
+              evolves_from_species_id
             }
           }
-          pokemon_v2_pokemon(where: {name: {_eq: "charizard"}}) {
+          pokemon_v2_pokemon(where: {name: {_eq: "eevee"}}) {
             name
             height
             weight
@@ -47,6 +48,7 @@ export const pokemonRouter = router({
                 name
               }
             }
+            id
           }
           pokemon_v2_typeefficacy(distinct_on: target_type_id) {
             pokemonV2TypeByTargetTypeId {
