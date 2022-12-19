@@ -127,8 +127,10 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
   console.log(typeShown);
 
+  //max-h-[calc(100vh-12rem)]
+
   if (pokemon.data) return (
-    <motion.div className="absolute top-32 w-full max-h-[calc(100vh-12rem)] flex flex-col justify-start items-center border-2 border-purple-600">
+    <motion.div className="absolute top-32 w-full max-h-[calc(100vh-20rem)] flex flex-col justify-start items-center border-2 border-purple-600">
       <div className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center border-2 border-pink-400">
       <Image
         key="pokeImage"
