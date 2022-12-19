@@ -128,8 +128,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   console.log(typeShown);
 
   if (pokemon.data) return (
-    <motion.div className="absolute top-32 w-full max-h-[calc(100vh-10rem)] flex flex-col justify-start items-center px-2">
-      <div className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center">
+    <motion.div className="absolute top-32 w-full max-h-[calc(100vh-10rem)] flex flex-col justify-start items-center border-2 border-purple-600">
+      <div className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center border-2 border-pink-400">
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
