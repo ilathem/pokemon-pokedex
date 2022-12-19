@@ -12,6 +12,10 @@ interface Props {
   pokemonName: string
 }
 
+interface Map {
+  [key: string]: boolean,
+}
+
 const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   const pokemon = trpc.pokemon.getOnePokemon.useQuery({ name: pokemonName.toLowerCase() })
 
@@ -27,7 +31,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   }
 
   const [ typeData, setTypeData ] = useState<Array<typeObject>>([])
-  const [ typeShown, setTypeShown ] = useState({})
+  const [ typeShown, setTypeShown ] = useState<Map>()
 
   useEffect(() => {
     
@@ -138,16 +142,18 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       <ul key="types" className="flex flex-col items-center justify-around w-full text-white/80">
         {typeData.map((type, index) => {
           const name: string = type.name
-          let visible = false;
           return (
             <li key={name} className="border-0 border-black flex flex-col items-center text-center relative">
               <PokeType name={name} clickHandler={() => {
-                setTypeShown({
-                  ...typeShown,
-                  [name]: !typeShown[name]
-                })
-              }}/>
-             {typeShown[name] && 
+                if (typeShown) {
+                  setTypeShown({
+                    ...typeShown,
+                    [name]: (!typeShown[name])
+                  })
+                }
+                }}
+              />
+             {(typeShown && typeShown[name]) && 
              <table className="text-sm border-spacing-2 border-separate border border-red-700/50">
               <tbody>
                 <tr>
