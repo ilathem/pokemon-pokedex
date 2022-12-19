@@ -31,7 +31,7 @@ const Home: NextPage<Props> = ({ pokeNames }) => {
         <meta name="description" content="A simple pokedex app build" />
         <link rel="icon" href="/pokeball.ico" />
       </Head>
-      <main className="flex absolute inset-0  flex-col items-center justify-start bg-gray-800 font-Montserrat overscroll-none">
+      <main className="flex absolute inset-0 overflow-hidden flex-col items-center justify-start bg-gray-800 font-Montserrat overscroll-none">
         <AnimatePresence>
           <SearchBar key="search" pokeNames={pokeNames} selectPokemon={selectPokemon} />
           {selectedPokemon && <Pokemon key="pokemon" pokemonName={selectedPokemon} />}
