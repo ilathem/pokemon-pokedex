@@ -17,7 +17,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
   // const [ evolutions, setEvolutions ] = useState<Array<string>>([''])
   interface typeObject {
-    name?: string,
+    name: string,
     double_damage_to: Array<string>,
     half_damage_from: Array<string>,
     no_damage_from: Array<string>,
@@ -27,8 +27,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   }
 
   const [ typeData, setTypeData ] = useState<Array<typeObject>>([])
-
-
+  const [ typeShown, setTypeShown ] = useState({})
 
   useEffect(() => {
     
@@ -39,7 +38,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     const typeDataArray:Array<typeObject> = []
     for (let i = 0; i < pokemon.data.types.length; i++) {
       const typeObject:typeObject = {
-        name: pokemon.data.types[i]?.name,
+        name: pokemon.data.types[i]?.name || '',
         double_damage_from: [],
         double_damage_to: [],
         half_damage_from: [],
@@ -47,7 +46,10 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         no_damage_from: [],
         no_damage_to: [],
       }
-      // console.log(pokemon.data.types[i]?.damage_relations.double_damage_to)
+      setTypeShown({
+        ...typeShown,
+        [typeObject.name]: false,
+      })
       if (pokemon.data.types[i]?.damage_relations.double_damage_to.length !== 0) {
         for (const types of pokemon.data.types[i]?.damage_relations.double_damage_to ?? []) {
           typeObject.double_damage_to.push(types.name);
@@ -119,6 +121,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     )
   }
 
+  console.log(typeShown);
+
   if (pokemon.data) return (
     <motion.div className="absolute top-32 w-full flex flex-col justify-start items-center px-2">
       <div className="overflow-y-auto overflow-x-hidden max-h-[calc(100vh-10rem)] w-full flex flex-col items-center">
@@ -132,12 +136,20 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         height="500"
       />
       <ul key="types" className="flex flex-col items-center justify-around w-full text-white/80">
-        {pokemon.data.pokemonData.types.map(type => {
-          const name: string = type.type.name
+        {typeData.map((type, index) => {
+          const name: string = type.name
+          let visible = false;
           return (
             <li key={name} className="border-0 border-black flex flex-col items-center text-center relative">
-              <PokeType name={name} />
-              <table className="text-sm border-spacing-2 border-separate border border-red-700/50">
+              <PokeType name={name} clickHandler={() => {
+                setTypeShown({
+                  ...typeShown,
+                  [name]: !typeShown[name]
+                })
+              }}/>
+             {typeShown[name] && 
+             <table className="text-sm border-spacing-2 border-separate border border-red-700/50">
+              <tbody>
                 <tr>
                   <td className="border border-red-700/50">Double Damage Dealt:</td>
                   <td className="border border-red-700/50">
@@ -210,7 +222,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                       })}
                   </td>
                 </tr>
-              </table>
+                </tbody>
+              </table>}
             </li>
           )
         })}
@@ -227,7 +240,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   )
 }
 
-const PokeType = ({name} : {name: string}) => {
+const PokeType = ({name, clickHandler} : {name: string, clickHandler: () => void}) => {
   return (
     <p
       className={
@@ -250,6 +263,7 @@ const PokeType = ({name} : {name: string}) => {
         name === "steel" ? "bg-steel shadow-lg shadow-steel/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
         name === "fairy" ? "bg-fairy shadow-lg shadow-fairy/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" : ""
       }
+      onClick={clickHandler}
     >
       {name}
     </p>
