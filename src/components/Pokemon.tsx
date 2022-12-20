@@ -5,7 +5,7 @@ import {
 } from "react";
 import { trpc } from "../utils/trpc";
 import { type Pokemon } from '../utils/types'
-import { motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Image from "next/image";
 
 interface Props {
@@ -130,8 +130,9 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   //max-h-[calc(100vh-12rem)]
 
   if (pokemon.data) return (
-    <motion.div className="absolute top-32 w-full max-h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-2 border-purple-600">
-      <div className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center border-2 border-pink-400">
+    <LayoutGroup>
+    <motion.div className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-2 border-purple-600">
+      <motion.div layoutScroll className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
@@ -141,11 +142,13 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         width="500"
         height="500"
       />
-      <ul key="types" className="flex flex-col items-center justify-around w-full text-white/80">
-        {typeData.map((type, index) => {
+      <motion.ul layout key="types" className="flex flex-row items-start justify-evenly w-full text-white/80">
+        
+        
+        {typeData.map((type) => {
           const name: string = type.name
           return (
-            <li key={name} className="border-0 border-black flex flex-col items-center text-center relative">
+            <motion.li layout key={name} className="z-10 border-0 border-black flex flex-col items-center text-center relative">
               <PokeType name={name} clickHandler={() => {
                 if (typeShown) {
                   setTypeShown({
@@ -154,9 +157,10 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   })
                 }
                 }}
-              />
+                />
+            <AnimatePresence mode="popLayout">
              {(typeShown && typeShown[name]) && 
-             <table className="text-sm border-spacing-2 border-separate border border-red-700/50">
+             <motion.table initial={{opacity: 0}} animate={{opacity: 1}} className="z-20 text-sm border-spacing-2 border-separate border border-red-700/50">
               <tbody>
                 <tr>
                   <td className="border border-red-700/50">Double Damage Dealt:</td>
@@ -231,17 +235,22 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                   </td>
                 </tr>
                 </tbody>
-              </table>}
-            </li>
+              </motion.table>}
+              </AnimatePresence>
+              
+            </motion.li>
           )
         })}
-      </ul>
+
+        
+      </motion.ul>
       <motion.div className="flex flex-row justify-around w-full m-1">
         <p className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></p>
         <p className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></p>
       </motion.div>
-      </div>
+      </motion.div>
     </motion.div>
+    </LayoutGroup>
   )
   return (
     <h1>No pokemon found...?</h1>
@@ -250,7 +259,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
 const PokeType = ({name, clickHandler} : {name: string, clickHandler: () => void}) => {
   return (
-    <p
+    <motion.p
+      layout
       className={
         name === "normal" ? "bg-normal shadow-lg shadow-normal/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
         name === "fire" ? "bg-fire shadow-lg shadow-fire/50 rounded-xl m-1 text-center py-1 px-2 text-white/80 w-min relative" :
@@ -274,7 +284,7 @@ const PokeType = ({name, clickHandler} : {name: string, clickHandler: () => void
       onClick={clickHandler}
     >
       {name}
-    </p>
+    </motion.p>
   )
 }
 
