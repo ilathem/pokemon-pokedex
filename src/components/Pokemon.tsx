@@ -131,7 +131,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
   if (pokemon.data) return (
     <LayoutGroup>
-    <motion.div className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-2 border-purple-600">
+    <motion.div className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-0 border-purple-600">
       <motion.div layoutScroll className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
       <Image
         key="pokeImage"
@@ -158,9 +158,9 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
                 }
                 }}
                 />
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence mode="sync">
              {(typeShown && typeShown[name]) && 
-             <motion.table initial={{opacity: 0}} animate={{opacity: 1}} className="z-20 text-sm border-spacing-2 border-separate border border-red-700/50">
+             <motion.table key={`${name}Table`} initial={{opacity: 0}} animate={{opacity: 1, scale: 1,}} exit={{opacity: 0, scale: 0, y: "-50%"}} className="text-sm border-spacing-2 border-separate border border-red-700/50">
               <tbody>
                 <tr>
                   <td className="border border-red-700/50">Double Damage Dealt:</td>
