@@ -140,13 +140,13 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   }, [radarData])
 
   const data = {
-    labels: ['HP', 'Attack', 'Defense', 'Special Attack', 'Special Attack', 'Speed'],
+    labels: [`HP ${radarData?.[0]}`, `Attack ${radarData?.[1]}`, `Defense ${radarData?.[2]}`, `Special Attack ${radarData?.[3]}`, `Special Defense ${radarData?.[4]}`, `Speed ${radarData?.[5]}`],
     datasets: [
       {
         label: 'Value',
         data: radarData,
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgb(255, 0, 0, .5)',
+        borderColor: '#FFDE00',
         borderWidth: 1,
       },
     ],
@@ -156,6 +156,20 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     scales: {
       r: {
         beginAtZero: true,
+        pointLabels: {
+          color: "#fff",
+          font: {
+            size: 16,
+            family: "Montserrat"
+          },
+        },
+        angleLines: {
+          color: "#A7A7A7",
+        },
+        grid: {
+          color: "rgb(0, 0, 0, 0)",
+          
+        }
       }
     }
   }
