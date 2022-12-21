@@ -8,17 +8,46 @@ import { type Pokemon } from '../utils/types'
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Image from "next/image";
 
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Radar } from "react-chartjs-2";
+import { scales } from "chart.js/dist";
+
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend
+);
+
 interface Props {
   pokemonName: string
 }
 
-interface Map {
+interface BoolMap {
   [key: string]: boolean,
+}
+
+interface StringMap {
+  [key: string]: string,
+}
+
+interface NumberMap {
+  [key: string]: number,
 }
 
 const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   const pokemon = trpc.pokemon.getOnePokemon.useQuery({ name: pokemonName.toLowerCase() })
-
+  
   // const [ evolutions, setEvolutions ] = useState<Array<string>>([''])
   interface typeObject {
     name: string,
@@ -30,8 +59,9 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     no_damage_to: Array<string>,
   }
 
+  const [ radarData, setRadarData ] = useState<Array<number>>()
   const [ typeData, setTypeData ] = useState<Array<typeObject>>([])
-  const [ typeShown, setTypeShown ] = useState<Map>()
+  const [ typeShown, setTypeShown ] = useState<BoolMap>()
 
   useEffect(() => {
     
@@ -88,6 +118,16 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       typeDataArray.push(typeObject);
     }
     setTypeData(typeDataArray)
+    setRadarData([
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'hp')[0]?.base_stat || 0,
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'attack')[0]?.base_stat || 0,
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'defense')[0]?.base_stat || 0,
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'special-attack')[0]?.base_stat || 0,
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'special-defense')[0]?.base_stat || 0,
+      pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'speed')[0]?.base_stat || 0,
+    ])
+    console.log(pokemon.data.pokemonData)
+    console.log(radarData)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon.isFetched])
 
@@ -95,6 +135,31 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     console.log(typeData)
   }, [typeData])
 
+  useEffect(() => {
+    console.log(radarData)
+  }, [radarData])
+
+  const data = {
+    labels: ['HP', 'Attack', 'Defense', 'Special Attack', 'Special Attack', 'Speed'],
+    datasets: [
+      {
+        label: 'Value',
+        data: radarData,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  }
+
+  const options = {
+    scales: {
+      r: {
+        beginAtZero: true,
+      }
+    }
+  }
+  
 
 
   // TODO: evolutions and graphql
@@ -131,8 +196,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
   if (pokemon.data) return (
     <LayoutGroup>
-    <motion.div className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-0 border-purple-600">
-      <motion.div layoutScroll className="overflow-y-scroll overflow-x-hidden h-full w-full flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
+    <motion.div layout className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-0 border-purple-600">
+      <motion.div layout className="overflow-y-scroll overflow-x-hidden h-full w-full max-w-sm flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
@@ -142,7 +207,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         width="500"
         height="500"
       />
-      <motion.ul layout key="types" className="flex flex-row items-start justify-evenly w-full text-white/80">
+      <motion.ul layout key="types" className="flex flex-row items-start justify-evenly w-full max-w-sm text-white/80">
         
         
         {typeData.map((type) => {
@@ -244,11 +309,15 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
         
       </motion.ul>
-      <motion.div className="flex flex-row justify-around w-full m-1">
-        <p className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></p>
-        <p className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></p>
+      <motion.div layout className="flex flex-row justify-around w-full m-1">
+        <motion.p layout className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></motion.p>
+        <motion.p layout className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></motion.p>
       </motion.div>
       </motion.div>
+      <Radar 
+        data={data}
+        options={options}
+      />
     </motion.div>
     </LayoutGroup>
   )
