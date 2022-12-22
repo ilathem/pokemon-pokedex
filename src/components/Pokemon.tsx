@@ -140,10 +140,10 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   }, [radarData])
 
   const data = {
-    labels: [`HP ${radarData?.[0]}`, `Attack ${radarData?.[1]}`, `Defense ${radarData?.[2]}`, `Special Attack ${radarData?.[3]}`, `Special Defense ${radarData?.[4]}`, `Speed ${radarData?.[5]}`],
+    labels: [`HP: ${radarData?.[0]}`, `Attack: ${radarData?.[1]}`, `Defense: ${radarData?.[2]}`, `Special Attack: ${radarData?.[3]}`, `Special Defense: ${radarData?.[4]}`, `Speed: ${radarData?.[5]}`],
     datasets: [
       {
-        label: 'Value',
+        label: 'Stats',
         data: radarData,
         backgroundColor: 'rgb(255, 0, 0, .5)',
         borderColor: '#FFDE00',
@@ -159,7 +159,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         pointLabels: {
           color: "#fff",
           font: {
-            size: 16,
+            size: 14,
             family: "Montserrat"
           },
         },
@@ -169,6 +169,27 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         grid: {
           color: "rgb(0, 0, 0, 0)",
           
+        },
+        ticks: {
+          count: 0,
+        },
+      }
+    },
+    layout: {
+      padding: {
+        left: 40,
+        right: 50,
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: "#fff",
+          font: {
+            size: 16,
+            family: "Montserrat"
+          },
+          boxWidth: 0,
         }
       }
     }
@@ -211,7 +232,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   if (pokemon.data) return (
     <LayoutGroup>
     <motion.div layout className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-0 border-purple-600">
-      <motion.div layout className="overflow-y-scroll overflow-x-hidden h-full w-full max-w-sm flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
+      <motion.div layout className="overflow-y-auto overflow-x-hidden h-full w-full max-w-sm flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
@@ -322,16 +343,19 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         })}
 
         
-      </motion.ul>
-      <motion.div layout className="flex flex-row justify-around w-full m-1">
-        <motion.p layout className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></motion.p>
-        <motion.p layout className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></motion.p>
+        </motion.ul>
+        <motion.div layout className="flex flex-row justify-around w-full m-1">
+          <motion.p layout className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></motion.p>
+          <motion.p layout className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></motion.p>
+        </motion.div>
+        <div className="w-full">
+        <Radar 
+          data={data}
+          options={options}
+          redraw={true}
+        />
+        </div>
       </motion.div>
-      </motion.div>
-      <Radar 
-        data={data}
-        options={options}
-      />
     </motion.div>
     </LayoutGroup>
   )
