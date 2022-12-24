@@ -4,7 +4,10 @@ import {
   useState
 } from "react";
 import { trpc } from "../utils/trpc";
-import { type Pokemon } from '../utils/types'
+import { 
+  type Pokemon,
+  type EvolutionFinalMap,
+} from '../utils/types'
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Image from "next/image";
 
@@ -18,7 +21,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Radar } from "react-chartjs-2";
-import { scales } from "chart.js/dist";
 
 ChartJS.register(
   RadialLinearScale,
@@ -62,9 +64,11 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   const [ radarData, setRadarData ] = useState<Array<number>>()
   const [ typeData, setTypeData ] = useState<Array<typeObject>>([])
   const [ typeShown, setTypeShown ] = useState<BoolMap>()
+  const [ evolutions, setEvolutions ] = useState<any>([]);
 
   useEffect(() => {
-    
+
+    // console.log(pokemon.data)
     console.log("getting types");
     if (pokemon.data === undefined) return;
     if (!pokemon.data) return;
@@ -114,7 +118,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
           typeObject.no_damage_to.push(types.name);
         }
       }
-      // console.log(typeObject)
+      console.log(typeObject)
       typeDataArray.push(typeObject);
     }
     setTypeData(typeDataArray)
@@ -126,16 +130,51 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'special-defense')[0]?.base_stat || 0,
       pokemon.data.pokemonData.stats.filter(stat => stat.stat.name === 'speed')[0]?.base_stat || 0,
     ])
-    console.log(pokemon.data.pokemonData)
-    console.log(radarData)
+    // console.log(pokemon.data.pokemonData)
+    // console.log(radarData)
+
+    // console.log(pokemon.data.evolutionFinal)
+    const tempEvolutionStages = []
+    for (const evolutionStage in pokemon.data.evolutionFinal) {
+      const tempArray = []
+      // console.log(evolutionStage)
+      
+      for (let i = 0; i < (pokemon?.data?.evolutionFinal[evolutionStage]?.length ?? 0); i++) {
+        // console.log(i);
+        // console.log("pushing...")
+        // console.log(pokemon.data.evolutionFinal[evolutionStage][i])
+        tempArray.push(pokemon?.data?.evolutionFinal[evolutionStage]?.[i])
+        // console.log(pokemonEvolutionData)
+        // console.log(pokemon.data.evolutionFinal[pokemonEvolutionData])
+        // tempArray.push(
+        //   pokemon.data.evolutionFinal[pokemonEvolutionData][0]
+        // )
+      }
+      
+      console.log('tempArray')
+      console.log(tempArray)
+      tempEvolutionStages.push(tempArray)
+    }
+
+    // console.log('evolutions:')
+    // console.log(tempEvolutionStages)
+    setEvolutions(tempEvolutionStages)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon.isFetched])
 
+  useEffect(() => {
+    console.log('evolutions:')
+    console.log(evolutions)
+  }, [evolutions])
+  
+
   useEffect(() =>{
-    console.log(typeData)
+    // console.log(typeData)
   }, [typeData])
 
   useEffect(() => {
+    console.log('radarData:')
     console.log(radarData)
   }, [radarData])
 
@@ -198,12 +237,12 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
 
   // TODO: evolutions and graphql
-  // TODO: stats and https://react-chartjs-2.js.org/
+
+  useEffect(() => {
+    // console.log(pokemon.data.)
+  }, [ pokemon ])
 
   // useEffect(() => {
-  //   // there is no way to get evolution id's from the pokemon fetch call,
-  //   // need to use graphql to query the db to get the right resources
-  //   // (maybe use graphql for everything?)
   //   const getEvolutions = () => {
   //     console.log("getting evolutions...")
   //     const tempEvolutions:Array<string> = []
@@ -225,7 +264,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
     )
   }
 
-  console.log(typeShown);
+  // console.log(typeShown);
 
   //max-h-[calc(100vh-12rem)]
 
@@ -236,7 +275,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
-        loader={() => pokemon.data.pokemonData.sprites.other.dream_world.front_default}
+        loader={() => pokemon.data.pokemonData.sprites.other["official-artwork"].front_default}
         src="/pokeball.ico"
         alt="Pokemon sprite"
         width="500"
@@ -354,6 +393,18 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
           options={options}
           redraw={true}
         />
+        </div>
+        <div className="text-xl text-white/80">
+          <p className="text-2xl">Evolutions</p>
+          {evolutions.map((evolution: Array<Array<string>>) => {
+            const returnArray = []
+            for (const pokemon of evolution) {
+              returnArray.push(
+                <p>{(pokemon[0]?.charAt(0).toUpperCase() ?? '') + pokemon[0]?.substring(1)}</p>
+              )
+            }
+            return returnArray;
+          })}
         </div>
       </motion.div>
     </motion.div>

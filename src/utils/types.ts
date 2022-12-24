@@ -120,16 +120,29 @@ export interface EvolutionChain {
   chain: ChainLink
 }
 
-export interface GraphQLResponse {
-  pokemon_v2_evolutionchain: Array<{
-    id: number,
-    pokemon_v2_pokemonspecies: Array<{
-      id: number,
-      name: string,
-      evolves_from_species_id: number|null,
-    }>
-  }>,
+export interface GraphQLEvolutionChain {
+  id: number,
+  pokemon_v2_pokemonspecies: Array<GraphQLEvolutionSpecies>,
 }
+
+export interface GraphQLEvolutionSpecies {
+  id: number,
+  name: string,
+  evolves_from_species_id: number | null,
+} 
+
+// export interface GraphQLResponse {
+//   pokemon_v2_evolutionchain: GraphQLEvolutionChain
+// }
+
+// export interface EvolutionStep {
+//   name: string,
+  
+// }
+
+// export interface Evolutions {
+
+// }
 
 export interface TypeRelations {
   no_damage_to: Array<NameAndUrl>,
@@ -171,4 +184,24 @@ export interface Types {
   names: Array<Name>,
   pokemon: Array<TypePokemon>,
   moves: Array<NameAndUrl>
+}
+
+export interface BoolMap {
+  [key: string]: boolean,
+}
+
+export interface StringMap {
+  [key: string]: string,
+}
+
+export interface NumberMap {
+  [key: string]: number,
+}
+
+export interface StringArrayMap {
+  [key: string]: Array<string>,
+}
+
+export interface EvolutionFinalMap {
+  [key: string]: Array<Array<string>>
 }
