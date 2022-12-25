@@ -10,6 +10,7 @@ import {
 } from '../utils/types'
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Image from "next/image";
+import { AiOutlineArrowDown } from 'react-icons/ai'
 
 import {
   Chart as ChartJS,
@@ -271,7 +272,7 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   if (pokemon.data) return (
     <LayoutGroup>
     <motion.div layout className="absolute top-32 w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-15rem)] flex flex-col justify-start items-center border-0 border-purple-600">
-      <motion.div layout className="overflow-y-auto overflow-x-hidden h-full w-full max-w-sm flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
+      <motion.div layout className="overflow-y-auto overflow-x-hidden h-full w-full flex flex-col items-center justify-start border-0 border-pink-400 scroll-smooth">
       <Image
         key="pokeImage"
         className="h-auto w-2/3 max-w-sm"
@@ -383,25 +384,39 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
 
         
         </motion.ul>
-        <motion.div layout className="flex flex-row justify-around w-full m-1">
-          <motion.p layout className="text-white/50 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></motion.p>
-          <motion.p layout className="text-white/50 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></motion.p>
+        <motion.div layout className="flex flex-row justify-center w-full m-1">
+          <motion.p layout className="text-white/50 mx-2 text-lg">Weight: <span className="text-white/80">{pokemon.data.pokemonData.weight}</span><span className="text-base">kg</span></motion.p>
+          <motion.p layout className="text-white/50 mx-2 text-lg">Height: <span className="text-white/80">{pokemon.data.pokemonData.height}</span><span className="text-base">m</span></motion.p>
         </motion.div>
-        <div className="w-full">
-        <Radar 
-          data={data}
-          options={options}
-          redraw={true}
-        />
+        <div className="sm:w-1/2 w-full flex flex-col items-center">
+          <Radar 
+            data={data}
+            options={options}
+            redraw={true}
+          />
         </div>
-        <div className="text-xl text-white/80">
+        <div className="text-xl text-white/80 flex flex-col items-center">
           <p className="text-2xl">Evolutions</p>
-          {evolutions.map((evolution: Array<Array<string>>) => {
+          {evolutions.map((evolution: Array<Array<string>>, index: number) => {
             const returnArray = []
             for (const pokemon of evolution) {
               returnArray.push(
+                <Image 
+                  key={`evolutionImg${pokemon[0]}`}
+                  className="h-auto w-1/2"
+                  loader={() => pokemon[1] ?? ''}
+                  src="/pokeball.ico"
+                  alt={`${pokemon[0]?.charAt(0).toUpperCase() ?? ''}${pokemon[0]?.substring(1)} Sprite`}
+                  width="500"
+                  height="500"
+                  />
+                )
+              returnArray.push(
                 <p>{(pokemon[0]?.charAt(0).toUpperCase() ?? '') + pokemon[0]?.substring(1)}</p>
               )
+            }
+            if (index < evolutions.length - 1) {
+              returnArray.push(<AiOutlineArrowDown style={{fontSize: "2em"}}/>)
             }
             return returnArray;
           })}
