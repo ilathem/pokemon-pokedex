@@ -8,16 +8,13 @@ import {
 import SearchBar from "../components/SearchBar";
 import Pokemon from "../components/Pokemon";
 import { AnimatePresence } from "framer-motion";
+import { type PokeName } from "../utils/types";
 
-import { type PokeNames } from "../utils/types";
-
-interface Props {
-  pokeNames: Array<PokeNames>;
+interface PokeNames {
+  pokeNames: Array<PokeName>;
 }
 
-// TODO : get rid of weird scrolling behavior on phone
-
-const Home: NextPage<Props> = ({ pokeNames }) => {
+const Home: NextPage<PokeNames> = ({ pokeNames }) => {
   const [ selectedPokemon, setSelectedPokemon ] = useState<string>('');
 
   const selectPokemon = (pokemonName: string) => {
@@ -46,9 +43,11 @@ export async function getStaticProps() {
     "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
   );
   const data = await res.json();
+  const pokeNames = data.results;
+  const trimmed = pokeNames.filter((element:PokeName) => !element.name.includes('-'));
   return {
     props: {
-      pokeNames: data.results,
+      pokeNames: trimmed,
     },
   };
 }
