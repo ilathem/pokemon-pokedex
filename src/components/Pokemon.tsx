@@ -164,20 +164,20 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pokemon.isFetched])
 
-  useEffect(() => {
-    console.log('evolutions:')
-    console.log(evolutions)
-  }, [evolutions])
+  // useEffect(() => {
+  //   console.log('evolutions:')
+  //   console.log(evolutions)
+  // }, [evolutions])
   
 
-  useEffect(() =>{
-    // console.log(typeData)
-  }, [typeData])
+  // useEffect(() =>{
+  //  console.log(typeData)
+  // }, [typeData])
 
-  useEffect(() => {
-    console.log('radarData:')
-    console.log(radarData)
-  }, [radarData])
+  // useEffect(() => {
+  //   console.log('radarData:')
+  //   console.log(radarData)
+  // }, [radarData])
 
   const data = {
     labels: [`HP: ${radarData?.[0]}`, `Attack: ${radarData?.[1]}`, `Defense: ${radarData?.[2]}`, `Special Attack: ${radarData?.[3]}`, `Special Defense: ${radarData?.[4]}`, `Speed: ${radarData?.[5]}`],
@@ -202,13 +202,13 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
             size: 14,
             family: "Montserrat"
           },
+          padding: 0,
         },
         angleLines: {
           color: "#A7A7A7",
         },
         grid: {
           color: "rgb(0, 0, 0, 0)",
-          
         },
         ticks: {
           count: 0,
@@ -219,6 +219,8 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
       padding: {
         left: 40,
         right: 50,
+        top: 20,
+        bottom: 0,
       }
     },
     plugins: {
@@ -226,10 +228,13 @@ const Pokemon: FunctionComponent<Props> = ({ pokemonName }) => {
         labels: {
           color: "#fff",
           font: {
-            size: 16,
+            size: 24,
             family: "Montserrat"
           },
           boxWidth: 0,
+          // padding: {
+          //   bottom: 0
+          // }
         }
       }
     }
