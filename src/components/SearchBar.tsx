@@ -27,7 +27,7 @@ interface PokeNames {
 const SearchBar: FunctionComponent<Props> = (
   { pokeNames, selectPokemon }
 ) => {
-  console.log(pokeNames)
+  // console.log(pokeNames)
   const [searchString, setSearchString] = useState<string>("");
   const [autoFill, setAutoFill] = useState<Array<string>>([]);
 
